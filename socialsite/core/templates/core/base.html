@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="{% static 'core/style.css' %}">
+<head>
+    <meta charset="UTF-8">
+    <title>SocialSite</title>
+</head>
+<body>
+    <nav>
+        <h1>SocialSite</h1>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
