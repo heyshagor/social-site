@@ -20,15 +20,25 @@
     <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
         
         <!-- USER + POST -->
-        <strong>{{ post.user.username }}</strong><br>
+        <strong>
+            <a href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a>
+        </strong><br>
         <p>{{ post.content }}</p>
         <small>{{ post.created_at }}</small>
 
-        <!-- ❤️ LIKE SYSTEM -->
-        <p>{{ post.like_set.count }} Likes</p>
-        <a href="{% url 'like_post' post.id %}">❤️ Like</a>
+       <!-- LIKE SYSTEM -->
+<p>{{ post.like_set.count }} Likes</p>
+{% if user.is_authenticated %}
+    <a href="{% url 'like_post' post.id %}">
+        {% if post.id in liked_post_ids %}
+            💔 Unlike
+        {% else %}
+            ❤️ Like
+        {% endif %}
+    </a>
+{% endif %}
 
-        <!-- 💬 COMMENT SECTION -->
+        <!-- COMMENT SECTION -->
         <hr>
         <h4>Comments:</h4>
 

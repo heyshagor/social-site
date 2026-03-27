@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<h2>{{ profile_user.username }}'s Profile</h2>
+
+<!-- Profile Picture -->
+{% if profile_user.profile.profile_pic %}
+    <img src="{{ profile_user.profile.profile_pic.url }}" alt="Profile Picture" width="100" style="border-radius:50%;">
+{% else %}
+    <img src="{% static 'core/default_profile.png' %}" alt="Profile Picture" width="100" style="border-radius:50%;">
+{% endif %}
+
+<p>Total posts: {{ post_count }}</p>
+<hr>
+
+{% for post in posts %}
+<div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+
+    <!-- Post content -->
+    <p>{{ post.content }}</p>
+    <small>{{ post.created_at }}</small>
+
+    <!-- LIKE SYSTEM -->
+    <p>{{ post.like_set.count }} Likes</p>
+    {% if user.is_authenticated %}
+        <a href="{% url 'like_post' post.id %}">
+            {% if user in post.like_set.all.values_list('user', flat=True) %}
+                💔 Unlike
+            {% else %}
+                ❤️ Like
+            {% endif %}
+        </a>
+    {% endif %}
+
+    <!-- COMMENT SECTION -->
+    <hr>
+    <h4>Comments:</h4>
+
+    {% for comment in post.comment_set.all %}
+        <p>
+            <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+        </p>
+    {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+
+    <!-- ADD COMMENT -->
+    {% if user.is_authenticated %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        {{ comment_form.as_p }}
+        <button type="submit">Comment</button>
+    </form>
+    {% endif %}
+
+</div>
+{% empty %}
+<p>No posts yet.</p>
+{% endfor %}
+
+{% endblock %}

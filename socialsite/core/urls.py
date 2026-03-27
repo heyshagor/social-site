@@ -12,4 +12,10 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     
     path('like/<int:post_id>/', views.like_post, name='like_post'),
+    
+    path('profile/<str:username>/', views.profile, name='profile'),
+    
+    path('post/edit/<int:pk>/', views.edit_post, name='edit_post'),
+    
+    path('post/delete/<int:pk>/', views.delete_post, name='delete_post'),
 ]
