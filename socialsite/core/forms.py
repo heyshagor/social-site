@@ -1,5 +1,7 @@
 from django import forms
-from .models import Post, Comment   #Comment must be imported
+from .models import Post, Comment 
+from django import forms
+from .models import Profile #Comment must be imported
 
 #Post Form
 class PostForm(forms.ModelForm):
@@ -12,3 +14,8 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['text']
+        
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['profile_pic']

@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -17,51 +18,82 @@
 <hr>
 
 {% for post in posts %}
-    <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+<div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+
+    <!-- USER + PROFILE IMAGE -->
+    <div style="display:flex; align-items:center; gap:10px;">
         
-        <!-- USER + POST -->
-        <strong>
-            <a href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a>
-        </strong><br>
-        <p>{{ post.content }}</p>
-        <small>{{ post.created_at }}</small>
-
-       <!-- LIKE SYSTEM -->
-<p>{{ post.like_set.count }} Likes</p>
-{% if user.is_authenticated %}
-    <a href="{% url 'like_post' post.id %}">
-        {% if post.id in liked_post_ids %}
-            💔 Unlike
+        {% if post.user.profile.profile_pic %}
+            <img src="{{ post.user.profile.profile_pic.url }}" 
+                 width="40" height="40" 
+                 style="border-radius:50%;">
         {% else %}
-            ❤️ Like
+            <img src="{% static 'core/default_profile.jpg' %}" 
+                 width="40" height="40" 
+                 style="border-radius:50%;">
         {% endif %}
-    </a>
-{% endif %}
 
-        <!-- COMMENT SECTION -->
-        <hr>
-        <h4>Comments:</h4>
-
-        {% for comment in post.comment_set.all %}
-            <p>
-                <strong>{{ comment.user.username }}</strong>: 
-                {{ comment.text }}
-            </p>
-        {% empty %}
-            <p>No comments yet.</p>
-        {% endfor %}
-
-        <!-- ADD COMMENT -->
-        {% if user.is_authenticated %}
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="post_id" value="{{ post.id }}">
-            {{ comment_form.as_p }}
-            <button type="submit">Comment</button>
-        </form>
-        {% endif %}
+        <strong>
+            <a href="{% url 'profile' post.user.username %}">
+                {{ post.user.username }}
+            </a>
+        </strong>
 
     </div>
+
+    <!-- POST CONTENT -->
+    <p>{{ post.content }}</p>
+    <small>{{ post.created_at }}</small>
+
+    <!-- LIKE SYSTEM -->
+    <p>{{ post.like_set.count }} Likes</p>
+    {% if user.is_authenticated %}
+        <a href="{% url 'like_post' post.id %}">
+            {% if post.id in liked_post_ids %}
+                💔 Unlike
+            {% else %}
+                ❤️ Like
+            {% endif %}
+        </a>
+    {% endif %}
+
+    <!-- COMMENT SECTION -->
+    <hr>
+    <h4>Comments:</h4>
+
+    {% for comment in post.comment_set.all %}
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+            
+            {% if comment.user.profile.profile_pic %}
+                <img src="{{ comment.user.profile.profile_pic.url }}" 
+                     width="30" height="30" 
+                     style="border-radius:50%;">
+            {% else %}
+                <img src="{% static 'core/default_profile.jpg' %}" 
+                     width="30" height="30" 
+                     style="border-radius:50%;">
+            {% endif %}
+
+            <p style="margin:0;">
+                <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+            </p>
+
+        </div>
+    {% empty %}
+        <p>No comments yet.</p>
+    {% endfor %}
+
+    <!-- ADD COMMENT -->
+    {% if user.is_authenticated %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        {{ comment_form.as_p }}
+        <button type="submit">Comment</button>
+    </form>
+    {% endif %}
+
+</div>
 {% endfor %}
 
 {% endblock %}

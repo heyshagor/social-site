@@ -5,6 +5,7 @@ from .forms import PostForm, CommentForm
 from .models import Post, Like
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from .forms import ProfileForm
 
 
 def home(request):
@@ -101,3 +102,16 @@ def delete_post(request, pk):
     if request.user == post.user:
         post.delete()
     return redirect('home')
+
+def edit_profile(request):
+    profile = request.user.profile
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', username=request.user.username)
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'core/edit_profile.html', {'form': form})
